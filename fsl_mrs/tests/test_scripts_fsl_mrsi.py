@@ -22,6 +22,23 @@ data = {'metab': testsPath / 'testdata/fsl_mrsi/FID_Metab.nii.gz',
 
 def test_fsl_mrsi(tmp_path):
 
+    print(' '.join(['fsl_mrsi',
+            '--data', str(data['metab']),
+            '--basis', str(data['basis']),
+            '--output', str(tmp_path / 'fit_out'),
+            '--metab_groups', 'MM09', 'MM12', 'MM14', 'MM17', 'MM21',
+            '--h2o', str(data['water']),
+            '--TE', '30',
+            '--TR', '2.0',
+            '--mask', str(data['mask']),
+            '--tissue_frac',
+            str(data['seg_wm']),
+            str(data['seg_gm']),
+            str(data['seg_csf']),
+            '--output_correlations',
+            '--overwrite',
+            '--combine', 'Cr', 'PCr']))
+
     subprocess.check_call(['fsl_mrsi',
                            '--data', data['metab'],
                            '--basis', data['basis'],

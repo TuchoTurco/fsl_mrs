@@ -287,3 +287,27 @@ def test_fmrs_stats_pairedttest_ftests(tmp_path):
         '--overwrite'])
 
     assert (tmp_path / 'out' / 'group_fstats.csv').is_file()
+
+
+def test_runmode(tmp_path):
+
+    with open(tmp_path / 'results_list', 'w') as fp:
+        fp.writelines([str(x) + '\n' for x in sim_results])
+
+    subprocess.check_call([
+        'fmrs_stats',
+        '--data', str(tmp_path / 'results_list'),
+        '--output', str(tmp_path / 'out'),
+        '--runmode', 'fe',
+        '--overwrite'])
+
+    assert (tmp_path / 'out' / 'group_stats.csv').is_file()
+    assert (tmp_path / 'out' / '0_stim').is_dir()
+    assert (tmp_path / 'out' / '1_stim').is_dir()
+    assert (tmp_path / 'out' / '2_ctrl').is_dir()
+    assert (tmp_path / 'out' / '3_ctrl').is_dir()
+    assert (tmp_path / 'out' / '0_stim' / 'free_parameters.csv').is_file()
+
+    df = pd.read_csv(tmp_path / 'out' / 'group_stats.csv', index_col=0, header=[0])
+    assert 'COPE' in df.columns
+    assert 'conc_NAA_beta3' in df.index

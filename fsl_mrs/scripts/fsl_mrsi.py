@@ -431,7 +431,7 @@ def main():
 
     # Uncertainties
     for metab in results[0][0].metabs:
-        metab_sd_list = [res[0].getUncertainties(metab=metab)
+        metab_sd_list = [res[0].getUncertainties(metab=metab).squeeze()
                          for res in results]
         file_nm = os.path.join(uncer_folder, metab + '_sd.nii.gz')
         save_img_output(file_nm,

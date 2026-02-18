@@ -254,18 +254,15 @@ def saveRAW(filename, FID, info=None, hdr=None, conj=False):
     elif 'FMTDAT' not in info:
         info.update({'FMTDAT': '(2E16.6)'})
 
-    rFID = np.real(FID)[:, None]
     if conj:
-        iFID = -1.0 * np.imag(FID)[:, None]
-    else:
-        iFID = np.imag(FID)[:, None]
+        FID = FID.conj()
 
     with open(filename, 'w') as my_file:
         if hdr is not None:
             writeLCMSection(my_file, 'SEQPAR', seqpar_header)
         writeLCMSection(my_file, 'NMID', info)
 
-        for (r, i) in zip(rFID, iFID):
+        for (r, i) in zip(FID.real, FID.imag):
             my_file.write(f'{float(r):16.6E}{float(i):16.6E}\n')
 
 
