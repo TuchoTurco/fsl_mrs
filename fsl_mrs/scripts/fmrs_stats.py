@@ -65,6 +65,11 @@ def main():
                                   help='FSL VEST file defining higher-level/group f-tests')
 
     # ADDITIONAL OPTIONAL ARGUMENTS
+    optional.add_argument('--runmode', type=str, default="flame1",
+                          help='Inference to perform: fe (fixed effects), '
+                               'ols (mixed effects - OLS), '
+                               'flame1 (mixed effects - FLAME stage 1), '
+                               'flame12 (mixed effects - FLAME stage 1+2).')
     optional.add_argument('--report', action="store_true",
                           help='output html report')
     optional.add_argument('--verbose', action="store_true",
@@ -201,6 +206,7 @@ def main():
         contrast_mat=contrast_mat,
         covariance_mat=covariance_mat,
         ftests=ftests_mat,
+        runmode=args.runmode,
         verbose=args.verbose)
 
     # Save main results

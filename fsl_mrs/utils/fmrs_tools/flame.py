@@ -22,36 +22,50 @@ os_name = sys.platform
 win_platforms = {'win32', 'cygwin'}
 
 
-def flameo_wrapper(cope, varcope, design_mat=None, contrast_mat=None, covariance_mat=None, ftests=None, verbose=False):
+def flameo_wrapper(
+        cope: np.ndarray,
+        varcope: np.ndarray,
+        design_mat: np.ndarray | None = None,
+        contrast_mat: np.ndarray | None = None,
+        covariance_mat: np.ndarray | None = None,
+        ftests: np.ndarray | None = None,
+        runmode: str = 'flame1',
+        verbose: bool = False):
     """Wrapper around FSL FLAMEO for fMRS group analysis
 
     Apply FLAME stage 1 method (https://www.fmrib.ox.ac.uk/datasets/techrep/tr04ss2/tr04ss2/node4.html) to
     fMRS GLM betas calulated using FSL-MRS dynamic fitting. Optional kwargs allow the user to specify
-    the design matrix, the t contrasts, and the groups the covariance is split into.
+    the design matrix, the t contrasts, the groups the covariance is split into, and the 'runmode'.
 
     :param cope: subjects x params numpy array of betas
-    :type cope: np.array
+    :type cope: np.ndarray
     :param varcope: subjects x params numpy array of variances
-    :type varcope: np.array
+    :type varcope: np.ndarray
     :param design_mat: Group analysis design matrix, defaults to np.ones((nsubjects, 1))
-    :type design_mat: np.array, optional
+    :type design_mat: np.ndarray, optional
     :param contrast_mat: Group analysis contrasts matrix, defaults to np.ones((1, 1))
-    :type contrast_mat: np.array, optional
+    :type contrast_mat: np.ndarray, optional
     :param covariance_mat: Vector of covariance group assignments, defaults to np.ones((nsubjects, 1))
-    :type covariance_mat: np.array, optional
+    :type covariance_mat: np.ndarray, optional
     :param ftests: Vector of f-test selections, defaults to np.zeros((1, ncontrasts))
-    :type ftests: np.array, optional
+    :type ftests: np.ndarray, optional
+    :param runmode: Inference to perform: fe (fixed effects), ols (mixed effects - OLS),
+        flame1 (mixed effects - FLAME stage 1), flame12 (mixed effects - FLAME stage 1+2)
+    :type runmode: str
     :return: Output p values
-    :rtype: np.array
+    :rtype: np.ndarray
     :return: Output z statistics
-    :rtype: np.array
+    :rtype: np.ndarray
     :return: Output group-level COPEs
-    :rtype: np.array
+    :rtype: np.ndarray
     :return: Output group-level VARCOPEs
-    :rtype: np.array
+    :rtype: np.ndarray
     :return: Output group-level f-tests results. Dict of f, zf stats and p values
     :rtype: dict or None
     """
+
+    if runmode not in ('fe', 'ols', 'flame1', 'flame12'):
+        raise ValueError('runmode must be one of fe, ols, flame1, flame12')
 
     nsubjects = cope.shape[0]
     nparams   = cope.shape[1]
@@ -117,7 +131,7 @@ def flameo_wrapper(cope, varcope, design_mat=None, contrast_mat=None, covariance
             f'--dm={str(tmp / "desmat")}',  # design matrix file
             f'--tc={str(tmp / "conmat")}',  # file containing matrix specifying the t contrasts
             f'--cs={str(tmp / "covmat")}',  # file containing matrix specifying the covariance groups
-            '--runmode=flame1',  # (mixed effects - FLAME stage 1)
+            f'--runmode={runmode}',  # (mixed effects - FLAME stage 1)
             '--sdof=-1']
 
         if ftests is not None:

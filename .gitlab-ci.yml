@@ -120,7 +120,7 @@ flake8:
     - docker
   before_script:
     - mkdir -p failures
-    - git config --global --add safe.directory /builds/fsl/fsl_mrs
+    - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
     - git submodule update --init --recursive
     - micromamba create -n fsl_mrs -c conda-forge -y python=$PYTHON_VERSION
     - eval "$(micromamba shell hook --shell bash)"

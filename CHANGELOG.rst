@@ -1,5 +1,11 @@
 This document contains the FSL-MRS release history in reverse chronological order.
 
+2.4.12 (Tuesday 17th February 2026)
+-----------------------------------
+- Allow passing of model (fe, FLAME1/2) through to the FSL flameo wrapper via `fmrs_stats`.
+- Enabled use of Python 3.14
+- Fix bugs introduced by stricter numpy array to scaler conversion rules.
+
 2.4.11 (Friday 28th November 2025)
 -----------------------------------
 - Fixed unnecessary warnings in `fsl_mrs_summarise` terminal output when viewing MH results.
